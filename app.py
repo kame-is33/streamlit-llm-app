@@ -1,11 +1,18 @@
-from dotenv import load_dotenv
-load_dotenv()
-
+import os
 import streamlit as st
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
-# ChatOpenAIの初期化
+# 環境に応じてAPIキーを取得する方法
+def get_api_key():
+    # StreamlitのSecretsから取得を試みる
+    if "OPENAI_API_KEY" in st.secrets:
+        return st.secrets["OPENAI_API_KEY"]
+    # 環境変数から取得を試みる
+    return os.environ.get("OPENAI_API_KEY")
+
+# ChatOpenAIの初期化（環境変数への依存を排除）
+api_key = get_api_key()
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
 
 def get_llm_response(input_text: str, expert_choice: str) -> str:
